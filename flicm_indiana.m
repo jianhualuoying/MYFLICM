@@ -2,23 +2,19 @@ function [Uout,iter] = flicm_indiana( image, label, U, m, cNum, maxIter, thrE )
 
     idxNon0 = find(label ~= 0);
     img = image(idxNon0,:); 
-%     img = reshape(image,size(image,1)*size(image,2),size(image,3));
     Uold = U;
     c = ClaCenter(img,U,cNum,m);
 	sweeps = 0;
 	dMax = 10.0;
-%     tempSum = zeros(size(image,1),cNum);    
     DIST = sqrt([2.0; 1.0; 2.0; 1.0; 1.0; 2.0; 1.0; 2.0]);     % sapce distance for neigbour
     
     S = uint32(1:size(image,1));
     SS = reshape(S,145,145);
-%     SS = reshape(S,size(image,1),size(image,2));
     padNum = 1;
     SSpad = wextend('2D','zpd',SS,padNum);
     clear SS S;
     SSpad = SSpad(:);
     M = 145 + padNum*2;
-%     M = size(image,1) + padNum*2;
     
     while( dMax>thrE && sweeps<=maxIter )
         
@@ -43,9 +39,7 @@ function [Uout,iter] = flicm_indiana( image, label, U, m, cNum, maxIter, thrE )
         U = zeros(row,cNum);
         for i = 1:row
             idx_i = idxNon0(i);
-%         for i = 1:numel(S)
             idxNeighbor = find_8Neighbur(SSpad,idx_i,M);
-%             idx = find_8Neighbur(SSpad,i,M);
             dist = DIST;
             if(nnz(idxNeighbor<=0))
                 dist = DIST(idxNeighbor>0);
